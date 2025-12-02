@@ -1,5 +1,13 @@
-def main():
-    print("Hi, Svitlo")
+import telebot
+import creds 
 
-if __name__ == "__main__":
-    main()
+
+bot = telebot.TeleBot(creds.api_key)
+
+@bot.message_handler(commands=['start'])
+def main(message):
+    bot.send_message(message.chat.id, 'Привіт, я світлоБот!')
+    
+    
+
+bot.polling(none_stop=True)
