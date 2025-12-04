@@ -1,0 +1,8 @@
+{
+  "cities": {
+    "rivnenska": "https://www.roe.vsei.ua/disconnections"
+  }
+  ,
+  "update_interval_minutes": 30
+}
+
