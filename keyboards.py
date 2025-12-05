@@ -1,7 +1,5 @@
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
-
-# --- REPLY КЛАВІАТУРА ---
 def main_menu_reply_keyboard():
 
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
@@ -21,8 +19,6 @@ def main_menu_reply_keyboard():
 
     return keyboard
 
-
-# --- INLINE КЛАВІАТУРА ---
 def profile_inline_keyboard():
 
     keyboard = InlineKeyboardMarkup()
@@ -38,8 +34,7 @@ def profile_inline_keyboard():
 def addresses_list_inline_keyboard():
     keyboard = InlineKeyboardMarkup(row_width=2)
 
-    # У цьому прикладі кнопки не є динамічними, але в реальному боті тут буде список адрес
-    # Додамо кнопки дій з адресою
+
     btn_edit = InlineKeyboardButton('📝 Редагувати', callback_data='address_edit')
     btn_delete = InlineKeyboardButton('🗑️ Видалити', callback_data='address_delete')
     keyboard.add(btn_edit, btn_delete)
@@ -52,7 +47,6 @@ def addresses_list_inline_keyboard():
 def schedule_inline_keyboard(queue_numbers):
     keyboard = InlineKeyboardMarkup()
 
-    # Додаємо список черг
     for num in queue_numbers:
         keyboard.add(InlineKeyboardButton(f'Черга {num}', callback_data=f'schedule_select_{num}'))
 
