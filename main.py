@@ -4,7 +4,6 @@ import json
 from datetime import datetime, timedelta
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-# ІМПОРТУЄМО ВСІ ФУНКЦІЇ КЛАВІАТУР
 from keyboards import (
     main_menu_reply_keyboard,
     profile_inline_keyboard,
@@ -15,13 +14,11 @@ from keyboards import (
 
 bot = telebot.TeleBot(creds.api_key)
 
-# --- Завантаження даних ---
 def load_data():
     with open("storage.json", "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-# --- Команди /help та /start ---
 @bot.message_handler(commands=['help'])
 def help_command(message):
     keyboard = main_menu_reply_keyboard()
@@ -41,8 +38,6 @@ def start(msg):
         reply_markup=keyboard
     )
 
-
-# --- Обробники головного меню ---
 @bot.message_handler(func=lambda message: message.text == '👤 Профіль')
 def handle_profile(message):
     keyboard = profile_inline_keyboard()
@@ -81,7 +76,6 @@ def handle_help_button(message):
     help_command(message)
 
 
-# --- Вибір черги через текст ---
 @bot.message_handler(func=lambda m: m.text.isdigit())
 def get_schedule(msg):
     queue_num = msg.text.strip()
@@ -98,7 +92,6 @@ def get_schedule(msg):
     bot.send_message(msg.chat.id, text)
 
 
-# --- Обробники Inline-кнопок профілю ---
 @bot.callback_query_handler(func=lambda call: call.data.startswith('profile_'))
 def handle_profile_inline_buttons(call):
     action = call.data.split('_')[-1]
@@ -128,12 +121,10 @@ def handle_back_button(call):
     bot.answer_callback_query(call.id)
 
 
-# --- Вибір черги через Inline ---
 @bot.callback_query_handler(func=lambda call: call.data.startswith('schedule_select_'))
 def handle_schedule_inline_buttons(call):
     queue_num = call.data.replace("schedule_select_", "")
 
-    # Відправляємо клавіатуру для вибору дня
     bot.edit_message_text(
         f"Ви обрали чергу *{queue_num}*.\nОберіть день:",
         chat_id=call.message.chat.id,
@@ -144,7 +135,6 @@ def handle_schedule_inline_buttons(call):
     bot.answer_callback_query(call.id)
 
 
-# --- Клавіатура вибору дня після вибору черги ---
 def schedule_day_choice_keyboard(queue_num):
     keyboard = InlineKeyboardMarkup()
     keyboard.add(
@@ -156,15 +146,13 @@ def schedule_day_choice_keyboard(queue_num):
     return keyboard
 
 
-# --- Обробка вибору дня ---
 @bot.callback_query_handler(func=lambda call: call.data.startswith('schedule_day_'))
 def handle_day_buttons(call):
     data = load_data()
     parts = call.data.split('_')
-    day_type = parts[2]      # today / tomorrow
+    day_type = parts[2]    
     queue_num = parts[3]
 
-    # Визначаємо дату
     today = datetime.now().date()
     if day_type == "today":
         selected_date = today
@@ -173,7 +161,6 @@ def handle_day_buttons(call):
 
     selected_date_str = selected_date.strftime("%d.%m.%Y")
 
-    # Перевірка наявності даних
     if selected_date_str not in data or queue_num not in data[selected_date_str]:
         bot.answer_callback_query(call.id, "Даних немає ❗")
         return
@@ -187,5 +174,4 @@ def handle_day_buttons(call):
     bot.send_message(call.message.chat.id, text, parse_mode='Markdown')
 
 
-# --- Запуск бота ---
 bot.polling(none_stop=True)
